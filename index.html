@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Proyecto Matemática Discreta - Grafos Interactivos</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    body {
+      margin: 0;
+      background: #020617;
+      color: #e5e7eb;
+    }
+    header {
+      padding: 1rem 2rem;
+      background: #020617;
+      border-bottom: 1px solid #1e293b;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+    header span {
+      font-size: 0.85rem;
+      color: #9ca3af;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 1.5rem auto;
+      padding: 0 1rem 2rem;
+    }
+    .nav-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .nav-tabs button {
+      border: 1px solid #1f2937;
+      background: #020617;
+      color: #e5e7eb;
+      padding: 0.5rem 0.9rem;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+    }
+    .nav-tabs button.active {
+      background: linear-gradient(to right, #2563eb, #4f46e5);
+      box-shadow: 0 0 15px rgba(37, 99, 235, 0.5);
+    }
+    .nav-tabs button:hover {
+      transform: translateY(-1px);
+    }
+    .view {
+      display: none;
+      border: 1px solid #1f2937;
+      border-radius: 1rem;
+      padding: 1.2rem;
+      background: radial-gradient(circle at top left, #020617, #020617 40%, #000 100%);
+    }
+    .view.active {
+      display: block;
+    }
+    h2 {
+      margin-top: 0;
+      font-size: 1.1rem;
+    }
+    p {
+      font-size: 0.9rem;
+      color: #cbd5f5;
+    }
+    .flex {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .panel {
+      flex: 1 1 280px;
+      min-width: 260px;
+    }
+    .panel h3 {
+      margin-top: 0;
+      font-size: 1rem;
+    }
+    .controls {
+      margin-top: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.15rem;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #9ca3af;
+    }
+    select, button.action-btn {
+      padding: 0.35rem 0.5rem;
+      border-radius: 0.5rem;
+      border: 1px solid #1f2937;
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 0.85rem;
+    }
+    button.action-btn {
+      margin-top: 0.3rem;
+      cursor: pointer;
+      background: linear-gradient(to right, #2563eb, #4f46e5);
+      border: none;
+      font-weight: 500;
+    }
+    button.action-btn:hover {
+      filter: brightness(1.1);
+    }
+    .result-box {
+      margin-top: 0.7rem;
+      padding: 0.6rem 0.8rem;
+      border-radius: 0.6rem;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid #1f2937;
+      font-size: 0.85rem;
+      min-height: 2.6rem;
+      white-space: pre-line;
+    }
+    svg {
+      border-radius: 0.8rem;
+      background: radial-gradient(circle at bottom, #020617, #030712);
+      border: 1px solid #1f2937;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
+    }
+    .node {
+      fill: #1d4ed8;
+      stroke: #93c5fd;
+      stroke-width: 2;
+      transition: transform 0.15s, fill 0.15s;
+    }
+    .node:hover {
+      transform: scale(1.08);
+      fill: #3b82f6;
+    }
+    .node-label {
+      fill: #e5e7eb;
+      font-size: 10px;
+      text-anchor: middle;
+    }
+    .edge {
+      stroke: #64748b;
+      stroke-width: 2;
+      transition: stroke 0.2s, stroke-width 0.2s;
+    }
+    .edge.highlight {
+      stroke: #22c55e;
+      stroke-width: 4;
+    }
+    .weight-label {
+      fill: #9ca3af;
+      font-size: 10px;
+      text-anchor: middle;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid #1f2937;
+      font-size: 0.7rem;
+      color: #9ca3af;
+      margin-bottom: 0.5rem;
+    }
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 6px rgba(34, 197, 94, 0.9);
+    }
+
+    /* ---- Teoría ---- */
+    .theory-layout {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 0.8rem;
+    }
+    .theory-card {
+      flex: 1 1 280px;
+      background: rgba(15, 23, 42, 0.96);
+      border-radius: 1rem;
+      border: 1px solid #1f2937;
+      padding: 0.9rem 1rem;
+      font-size: 0.9rem;
+    }
+    .theory-card h3 {
+      margin: 0 0 0.4rem 0;
+      font-size: 0.95rem;
+    }
+    .theory-card ul {
+      margin: 0.2rem 0 0 1rem;
+      padding: 0;
+      font-size: 0.85rem;
+    }
+    .theory-card code {
+      font-size: 0.8rem;
+      background: #020617;
+      padding: 0.1rem 0.25rem;
+      border-radius: 0.3rem;
+    }
+
+    /* ---- Transporte: mapa + bus ---- */
+    .graph-wrapper {
+      position: relative;
+      width: 500px;
+      height: 320px;
+      margin: 0 auto;
+    }
+    #transport-graph {
+      width: 500px;
+      height: 320px;
+    }
+    .bus-icon {
+      position: absolute;
+      font-size: 22px;
+      pointer-events: none;
+      transition: transform 0.6s ease;
+      opacity: 0;
+      filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.8));
+    }
+
+    /* ---- Semáforos ---- */
+    .intersection {
+      position: relative;
+      width: 320px;
+      height: 320px;
+      margin: 0 auto;
+      background: radial-gradient(circle at center, #020617, #020617 40%, #000 100%);
+      border-radius: 1rem;
+      border: 1px solid #1f2937;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
+    }
+    .road {
+      position: absolute;
+      background: #111827;
+    }
+    .road.horizontal {
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 70px;
+      transform: translateY(-50%);
+    }
+    .road.vertical {
+      left: 50%;
+      top: 0;
+      width: 70px;
+      height: 100%;
+      transform: translateX(-50%);
+    }
+    .lane-line {
+      position: absolute;
+      border-top: 2px dashed #4b5563;
+      width: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .lane-line-vert {
+      position: absolute;
+      border-left: 2px dashed #4b5563;
+      height: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .light-box {
+      position: absolute;
+      width: 40px;
+      height: 90px;
+      background: #020617;
+      border-radius: 0.6rem;
+      border: 1px solid #1e293b;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: center;
+      padding: 6px 0;
+    }
+    .light {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: #020617;
+      box-shadow: 0 0 0 rgba(0,0,0,0);
+    }
+    .light.red.on {
+      background: #ef4444;
+      box-shadow: 0 0 14px rgba(248, 113, 113, 0.9);
+    }
+    .light.yellow.on {
+      background: #facc15;
+      box-shadow: 0 0 14px rgba(250, 204, 21, 0.9);
+    }
+    .light.green.on {
+      background: #22c55e;
+      box-shadow: 0 0 14px rgba(34, 197, 94, 0.9);
+    }
+    .north { top: 10px; left: 50%; transform: translateX(-50%); }
+    .south { bottom: 10px; left: 50%; transform: translateX(-50%) rotate(180deg); }
+    .west  { left: 10px; top: 50%; transform: translateY(-50%) rotate(90deg); }
+    .east  { right: 10px; top: 50%; transform: translateY(-50%) rotate(-90deg); }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Proyecto Matemática Discreta – Grafos Interactivos</h1>
+      <span>Red de transporte • Red eléctrica / agua • Sistema de semáforos</span>
+    </div>
+    <span>Maqueta digital interactiva</span>
+  </header>
+
+  <div class="container">
+    <div class="nav-tabs">
+      <button class="tab-btn active" data-target="teoria">Resumen teórico</button>
+      <button class="tab-btn" data-target="transporte">Red de transporte</button>
+      <button class="tab-btn" data-target="electrica">Red eléctrica / agua (MST)</button>
+      <button class="tab-btn" data-target="semaforos">Sistema de semáforos</button>
+    </div>
+
+    <!-- VISTA 0: TEORÍA -->
+    <section id="teoria" class="view active">
+      <span class="badge"><span class="badge-dot"></span> Teoría rápida para explicar el proyecto</span>
+      <h2>¿Qué estás modelando con estos 3 sistemas?</h2>
+      <p>
+        Los tres modelos representan <strong>grafos</strong> en contextos reales:
+        cada punto (nodo) es un lugar o dispositivo, y cada conexión (arista) es una
+        carretera, tubería o calle. Los pesos representan costos, distancias o tiempos.
+      </p>
+
+      <div class="theory-layout">
+        <div class="theory-card">
+          <h3>1. Grafo ponderado y rutas más cortas (Dijkstra)</h3>
+          <ul>
+            <li>Un <strong>grafo ponderado</strong> tiene pesos en sus aristas (km, minutos, costo).</li>
+            <li>El algoritmo de <strong>Dijkstra</strong> calcula la ruta más barata desde un nodo origen
+                a todos los demás, siempre que los pesos sean positivos.</li>
+            <li>Idea básica:
+              <ul>
+                <li>Empiezas en el origen con distancia 0.</li>
+                <li>Vas eligiendo el nodo “más cercano no visitado”.</li>
+                <li>Actualizas las distancias de sus vecinos si encuentras rutas más cortas.</li>
+              </ul>
+            </li>
+            <li>En la web-app, tú eliges origen y destino y el sistema:
+              <ul>
+                <li>Resalta en verde la ruta óptima en el mapa.</li>
+                <li>Muestra la distancia total en km.</li>
+                <li>Puede “mover” un bus 🚍 siguiendo ese camino.</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <div class="theory-card">
+          <h3>2. Árbol de expansión mínima (MST - Prim)</h3>
+          <ul>
+            <li>En una red eléctrica/agua, quieres conectar todos los nodos al menor costo posible.</li>
+            <li>Un <strong>árbol de expansión mínima (MST)</strong> es un subconjunto de aristas que:
+              <ul>
+                <li>Conecta todos los nodos.</li>
+                <li>No tiene ciclos.</li>
+                <li>Minimiza la suma de los pesos (costo total).</li>
+              </ul>
+            </li>
+            <li>El algoritmo de <strong>Prim</strong>:
+              <ul>
+                <li>Empieza desde un nodo cualquiera.</li>
+                <li>Va agregando siempre la arista más barata que conecta un nodo nuevo al árbol.</li>
+              </ul>
+            </li>
+            <li>En la web-app, un botón:
+              <ul>
+                <li>Calcula el MST.</li>
+                <li>Resalta en verde las conexiones que forman la “línea principal”.</li>
+                <li>Muestra el costo total mínimo.</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <div class="theory-card">
+          <h3>3. Semáforos como grafo y conectividad</h3>
+          <ul>
+            <li>Cada cruce se puede ver como un <strong>vértice</strong>, y cada calle como una <strong>arista</strong>.</li>
+            <li>El control de semáforos define <strong>qué aristas están “activas”</strong> (permiten paso) en cada momento.</li>
+            <li>Cuando un semáforo está en rojo o falla, es como si esa arista se “apagase” temporalmente.</li>
+            <li>En la web-app:
+              <ul>
+                <li>Se simulan ciclos de luz verde/amarilla/roja para dos direcciones.</li>
+                <li>Hay un botón para simular un <strong>fallo</strong> en una dirección.</li>
+                <li>Eso te permite comentar cómo cambian los caminos posibles en el grafo de la intersección.</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISTA 1: RED DE TRANSPORTE -->
+    <section id="transporte" class="view">
+      <span class="badge"><span class="badge-dot"></span> Grafo ponderado + Dijkstra + animación de bus</span>
+      <h2>Red física de transporte</h2>
+      <p>
+        Cada nodo representa un punto de la ciudad (terminal, centro, mercado, universidad, hospital, centro comercial) y cada arista
+        una carretera con su distancia en km. Puedes elegir un origen y un destino, y el sistema calculará la
+        <strong>ruta más corta</strong> usando el algoritmo de Dijkstra, resaltando el camino y animando un bus 🚍 sobre el mapa.
+      </p>
+      <div class="flex">
+        <div class="panel">
+          <h3>Mapa de la ciudad (maqueta digital)</h3>
+          <div class="graph-wrapper">
+            <svg id="transport-graph" viewBox="0 0 500 320">
+              <!-- Aristas (carreteras) -->
+              <line id="edge-A-B" class="edge" x1="80" y1="70" x2="250" y2="60" />
+              <line id="edge-A-C" class="edge" x1="80" y1="70" x2="140" y2="170" />
+              <line id="edge-B-C" class="edge" x1="250" y1="60" x2="140" y2="170" />
+              <line id="edge-B-D" class="edge" x1="250" y1="60" x2="350" y2="150" />
+              <line id="edge-C-D" class="edge" x1="140" y1="170" x2="350" y2="150" />
+              <line id="edge-C-E" class="edge" x1="140" y1="170" x2="200" y2="260" />
+              <line id="edge-D-E" class="edge" x1="350" y1="150" x2="200" y2="260" />
+              <line id="edge-D-F" class="edge" x1="350" y1="150" x2="430" y2="230" />
+              <line id="edge-E-F" class="edge" x1="200" y1="260" x2="430" y2="230" />
+
+              <!-- Pesos (distancia en km) -->
+              <text class="weight-label" x="165" y="55">4 km</text>
+              <text class="weight-label" x="100" y="120">2 km</text>
+              <text class="weight-label" x="195" y="120">1 km</text>
+              <text class="weight-label" x="310" y="90">5 km</text>
+              <text class="weight-label" x="245" y="165">8 km</text>
+              <text class="weight-label" x="160" y="230">10 km</text>
+              <text class="weight-label" x="275" y="215">2 km</text>
+              <text class="weight-label" x="390" y="185">6 km</text>
+              <text class="weight-label" x="320" y="250">3 km</text>
+
+              <!-- Nodos (lugares de la ciudad) -->
+              <circle class="node" cx="80" cy="70" r="15" />
+              <text class="node-label" x="80" y="70">A</text>
+              <text class="node-label" x="80" y="90">Terminal 🚉</text>
+
+              <circle class="node" cx="250" cy="60" r="15" />
+              <text class="node-label" x="250" y="60">B</text>
+              <text class="node-label" x="250" y="80">Centro 🏙️</text>
+
+              <circle class="node" cx="140" cy="170" r="15" />
+              <text class="node-label" x="140" y="170">C</text>
+              <text class="node-label" x="140" y="190">Mercado 🛒</text>
+
+              <circle class="node" cx="350" cy="150" r="15" />
+              <text class="node-label" x="350" y="150">D</text>
+              <text class="node-label" x="350" y="170">Univ. 🎓</text>
+
+              <circle class="node" cx="200" cy="260" r="15" />
+              <text class="node-label" x="200" y="260">E</text>
+              <text class="node-label" x="200" y="280">Hospital 🏥</text>
+
+              <circle class="node" cx="430" cy="230" r="15" />
+              <text class="node-label" x="430" y="230">F</text>
+              <text class="node-label" x="430" y="250">Centro Com. 🛍️</text>
+            </svg>
+            <div id="bus-icon" class="bus-icon">🚍</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Simulación de Dijkstra</h3>
+          <div class="controls">
+            <div>
+              <label for="origen">Origen</label>
+              <select id="origen">
+                <option value="A">A – Terminal</option>
+                <option value="B">B – Centro</option>
+                <option value="C">C – Mercado</option>
+                <option value="D">D – Universidad</option>
+                <option value="E">E – Hospital</option>
+                <option value="F">F – Centro Comercial</option>
+              </select>
+            </div>
+            <div>
+              <label for="destino">Destino</label>
+              <select id="destino">
+                <option value="A">A – Terminal</option>
+                <option value="B">B – Centro</option>
+                <option value="C">C – Mercado</option>
+                <option value="D">D – Universidad</option>
+                <option value="E">E – Hospital</option>
+                <option value="F" selected>F – Centro Comercial</option>
+              </select>
+            </div>
+            <button class="action-btn" id="btn-dijkstra">
+              Calcular ruta más corta
+            </button>
+            <button class="action-btn" id="btn-anim-bus" style="background:#16a34a;">
+              Animar recorrido del bus
+            </button>
+            <button class="action-btn" id="btn-reset-dijkstra" style="background:#111827;">
+              Limpiar resaltado
+            </button>
+            <div class="result-box" id="resultado-dijkstra">
+              Selecciona un origen y un destino, y luego presiona “Calcular ruta más corta”.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISTA 2: RED ELÉCTRICA / AGUA -->
+    <section id="electrica" class="view">
+      <span class="badge"><span class="badge-dot"></span> Grafo + Árbol de expansión mínima (MST)</span>
+      <h2>Red eléctrica / de agua con análisis de redundancia</h2>
+      <p>
+        Aquí modelamos una red de distribución (planta, subestaciones, clientes) como un grafo ponderado.
+        El sistema puede calcular un <strong>árbol de expansión mínima (MST)</strong> que conecta todos
+        los nodos con el costo total más bajo. Las aristas resaltadas en verde representan la infraestructura
+        básica mínima; las no resaltadas pueden interpretarse como rutas de redundancia.
+      </p>
+      <div class="flex">
+        <div class="panel">
+          <h3>Red de distribución ⚡ / 💧</h3>
+          <svg id="electric-graph" viewBox="0 0 500 320">
+            <!-- Aristas -->
+            <line id="edge-P-Q" class="edge" x1="70" y1="80" x2="230" y2="60" />
+            <line id="edge-P-R" class="edge" x1="70" y1="80" x2="140" y2="200" />
+            <line id="edge-Q-R" class="edge" x1="230" y1="60" x2="140" y2="200" />
+            <line id="edge-Q-S" class="edge" x1="230" y1="60" x2="360" y2="90" />
+            <line id="edge-R-T" class="edge" x1="140" y1="200" x2="260" y2="250" />
+            <line id="edge-S-T" class="edge" x1="360" y1="90" x2="260" y2="250" />
+            <line id="edge-S-U" class="edge" x1="360" y1="90" x2="430" y2="210" />
+            <line id="edge-T-U" class="edge" x1="260" y1="250" x2="430" y2="210" />
+
+            <!-- Pesos (costos) -->
+            <text class="weight-label" x="150" y="60">6</text>
+            <text class="weight-label" x="100" y="145">4</text>
+            <text class="weight-label" x="185" y="140">5</text>
+            <text class="weight-label" x="300" y="65">3</text>
+            <text class="weight-label" x="205" y="235">4</text>
+            <text class="weight-label" x="315" y="180">7</text>
+            <text class="weight-label" x="395" y="150">2</text>
+            <text class="weight-label" x="345" y="240">6</text>
+
+            <!-- Nodos -->
+            <circle class="node" cx="70" cy="80" r="15" />
+            <text class="node-label" x="70" y="80">P</text>
+            <text class="node-label" x="70" y="100">Planta 🏭</text>
+
+            <circle class="node" cx="230" cy="60" r="15" />
+            <text class="node-label" x="230" y="60">Q</text>
+            <text class="node-label" x="230" y="80">Subest. Norte ⚡</text>
+
+            <circle class="node" cx="140" cy="200" r="15" />
+            <text class="node-label" x="140" y="200">R</text>
+            <text class="node-label" x="140" y="220">Subest. Sur ⚡</text>
+
+            <circle class="node" cx="360" cy="90" r="15" />
+            <text class="node-label" x="360" y="90">S</text>
+            <text class="node-label" x="360" y="110">Nodo Este 💧</text>
+
+            <circle class="node" cx="260" cy="250" r="15" />
+            <text class="node-label" x="260" y="250">T</text>
+            <text class="node-label" x="260" y="270">Nodo Oeste 💧</text>
+
+            <circle class="node" cx="430" cy="210" r="15" />
+            <text class="node-label" x="430" y="210">U</text>
+            <text class="node-label" x="430" y="230">Cliente 🏠</text>
+          </svg>
+        </div>
+
+        <div class="panel">
+          <h3>Análisis con Árbol de Expansión Mínima</h3>
+          <div class="controls">
+            <p style="font-size:0.85rem;">
+              Presiona el botón para calcular un MST (usando Prim) y resaltar las conexiones esenciales
+              de menor costo. Luego puedes comentar qué aristas no resaltadas sirven como rutas de redundancia.
+            </p>
+            <button class="action-btn" id="btn-mst">
+              Calcular y resaltar MST
+            </button>
+            <button class="action-btn" id="btn-reset-mst" style="background:#111827;">
+              Limpiar resaltado
+            </button>
+            <div class="result-box" id="resultado-mst">
+              Aquí aparecerá el conjunto de aristas seleccionadas en el MST y el costo total.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISTA 3: SISTEMA DE SEMÁFOROS -->
+    <section id="semaforos" class="view">
+      <span class="badge"><span class="badge-dot"></span> Grafos + sistema dinámico de semáforos</span>
+      <h2>Sistema físico de semáforos conectado por grafos</h2>
+      <p>
+        Modelamos una intersección donde cada cruce es un vértice y las calles son aristas del grafo.
+        La simulación controla el ciclo de luces (verde–amarillo–rojo) en dos direcciones:
+        <strong>norte-sur</strong> y <strong>este-oeste</strong>. También puedes simular un fallo en un semáforo
+        y discutir cómo afecta la conectividad del flujo vehicular.
+      </p>
+      <div class="flex">
+        <div class="panel">
+          <h3>Intersección y semáforos 🚦</h3>
+          <div class="intersection">
+            <div class="road horizontal">
+              <div class="lane-line"></div>
+            </div>
+            <div class="road vertical">
+              <div class="lane-line-vert"></div>
+            </div>
+
+            <div class="light-box north">
+              <div id="north-red" class="light red"></div>
+              <div id="north-yellow" class="light yellow"></div>
+              <div id="north-green" class="light green"></div>
+            </div>
+
+            <div class="light-box south">
+              <div id="south-red" class="light red"></div>
+              <div id="south-yellow" class="light yellow"></div>
+              <div id="south-green" class="light green"></div>
+            </div>
+
+            <div class="light-box west">
+              <div id="west-red" class="light red"></div>
+              <div id="west-yellow" class="light yellow"></div>
+              <div id="west-green" class="light green"></div>
+            </div>
+
+            <div class="light-box east">
+              <div id="east-red" class="light red"></div>
+              <div id="east-yellow" class="light yellow"></div>
+              <div id="east-green" class="light green"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Control del ciclo y fallos</h3>
+          <div class="controls">
+            <button class="action-btn" id="btn-start-sem">
+              Iniciar ciclo de semáforos
+            </button>
+            <button class="action-btn" id="btn-stop-sem" style="background:#111827;">
+              Detener ciclo
+            </button>
+            <button class="action-btn" id="btn-fallo">
+              Simular fallo en norte-sur
+            </button>
+            <div class="result-box" id="resultado-sem">
+              Estado: ciclo detenido. Pulsa “Iniciar ciclo de semáforos”.
+            </div>
+            <p style="font-size:0.8rem; margin-top:0.5rem;">
+              En términos de teoría de grafos, cada vía que deja de funcionar por un fallo puede verse como
+              una arista “desactivada”. Puedes explicar cómo eso afecta los caminos posibles entre
+              los vértices de la red vial.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // ------ Navegación de pestañas ------
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+        btn.classList.add("active");
+        const target = btn.getAttribute("data-target");
+        document.getElementById(target).classList.add("active");
+      });
+    });
+
+    // ========================================================
+    // 1. RED DE TRANSPORTE – DIJKSTRA + BUS ANIMADO
+    // ========================================================
+    const transportGraph = {
+      A: { B: 4, C: 2 },
+      B: { A: 4, C: 1, D: 5 },
+      C: { A: 2, B: 1, D: 8, E: 10 },
+      D: { B: 5, C: 8, E: 2, F: 6 },
+      E: { C: 10, D: 2, F: 3 },
+      F: { D: 6, E: 3 }
+    };
+
+    const nodeCoords = {
+      A: { x: 80,  y: 70  },
+      B: { x: 250, y: 60  },
+      C: { x: 140, y: 170 },
+      D: { x: 350, y: 150 },
+      E: { x: 200, y: 260 },
+      F: { x: 430, y: 230 }
+    };
+
+    const busIcon = document.getElementById("bus-icon");
+    let lastTransportPath = null;
+
+    function clearTransportHighlight() {
+      document.querySelectorAll("#transport-graph .edge").forEach(e => {
+        e.classList.remove("highlight");
+      });
+    }
+
+    function highlightTransportPath(path) {
+      clearTransportHighlight();
+      for (let i = 0; i < path.length - 1; i++) {
+        const u = path[i];
+        const v = path[i + 1];
+        const id1 = `edge-${u}-${v}`;
+        const id2 = `edge-${v}-${u}`;
+        const edgeEl = document.getElementById(id1) || document.getElementById(id2);
+        if (edgeEl) {
+          edgeEl.classList.add("highlight");
+        }
+      }
+    }
+
+    function dijkstra(graph, start) {
+      const dist = {};
+      const prev = {};
+      const unvisited = new Set(Object.keys(graph));
+      for (const node of unvisited) {
+        dist[node] = Infinity;
+        prev[node] = null;
+      }
+      dist[start] = 0;
+
+      while (unvisited.size > 0) {
+        let u = null;
+        let minDist = Infinity;
+        for (const node of unvisited) {
+          if (dist[node] < minDist) {
+            minDist = dist[node];
+            u = node;
+          }
+        }
+        if (u === null || dist[u] === Infinity) {
+          break;
+        }
+        unvisited.delete(u);
+        for (const [v, w] of Object.entries(graph[u])) {
+          if (!unvisited.has(v)) continue;
+          const alt = dist[u] + w;
+          if (alt < dist[v]) {
+            dist[v] = alt;
+            prev[v] = u;
+          }
+        }
+      }
+      return { dist, prev };
+    }
+
+    function reconstructPath(prev, start, end) {
+      const path = [];
+      let current = end;
+      while (current !== null) {
+        path.push(current);
+        current = prev[current];
+      }
+      path.reverse();
+      if (path[0] === start) {
+        return path;
+      }
+      return null;
+    }
+
+    function placeBusAt(node) {
+      if (!busIcon || !nodeCoords[node]) return;
+      const { x, y } = nodeCoords[node];
+      // Ajuste pequeño para centrar el emoji en el nodo
+      busIcon.style.transform = `translate(${x - 11}px, ${y - 15}px)`;
+      busIcon.style.opacity = "1";
+    }
+
+    function animateBusAlong(path) {
+      if (!busIcon || !path || path.length === 0) return;
+      let i = 0;
+      placeBusAt(path[0]);
+      const interval = setInterval(() => {
+        i++;
+        if (i >= path.length) {
+          clearInterval(interval);
+          return;
+        }
+        placeBusAt(path[i]);
+      }, 700);
+    }
+
+    document.getElementById("btn-dijkstra").addEventListener("click", () => {
+      const origen = document.getElementById("origen").value;
+      const destino = document.getElementById("destino").value;
+      const { dist, prev } = dijkstra(transportGraph, origen);
+      const path = reconstructPath(prev, origen, destino);
+      const box = document.getElementById("resultado-dijkstra");
+
+      if (!path) {
+        box.textContent = "No existe un camino entre " + origen + " y " + destino + ".";
+        clearTransportHighlight();
+        lastTransportPath = null;
+        return;
+      }
+
+      highlightTransportPath(path);
+      const distancia = dist[destino];
+      box.textContent =
+        "Ruta más corta de " + origen + " a " + destino + ":\n" +
+        path.join(" → ") + "\n\n" +
+        "Distancia total: " + distancia + " km.";
+      lastTransportPath = path;
+      placeBusAt(path[0]);
+    });
+
+    document.getElementById("btn-reset-dijkstra").addEventListener("click", () => {
+      clearTransportHighlight();
+      document.getElementById("resultado-dijkstra").textContent =
+        "Resaltado limpiado. Vuelve a calcular una ruta si lo deseas.";
+      lastTransportPath = null;
+      if (busIcon) busIcon.style.opacity = "0";
+    });
+
+    document.getElementById("btn-anim-bus").addEventListener("click", () => {
+      const box = document.getElementById("resultado-dijkstra");
+      if (!lastTransportPath) {
+        box.textContent =
+          "Primero calcula una ruta más corta, luego podrás animar el recorrido del bus.";
+        return;
+      }
+      animateBusAlong(lastTransportPath);
+    });
+
+    // Posición inicial del bus en A
+    placeBusAt("A");
+
+    // ========================================================
+    // 2. RED ELÉCTRICA / AGUA – MST (PRIM)
+    // ========================================================
+    const electricGraph = {
+      P: { Q: 6, R: 4 },
+      Q: { P: 6, R: 5, S: 3 },
+      R: { P: 4, Q: 5, T: 4 },
+      S: { Q: 3, T: 7, U: 2 },
+      T: { R: 4, S: 7, U: 6 },
+      U: { S: 2, T: 6 }
+    };
+
+    function clearMSTHighlight() {
+      document.querySelectorAll("#electric-graph .edge").forEach(e => {
+        e.classList.remove("highlight");
+      });
+    }
+
+    function highlightMSTEdges(edges) {
+      clearMSTHighlight();
+      for (const edge of edges) {
+        const { u, v } = edge;
+        const id1 = `edge-${u}-${v}`;
+        const id2 = `edge-${v}-${u}`;
+        const el = document.getElementById(id1) || document.getElementById(id2);
+        if (el) {
+          el.classList.add("highlight");
+        }
+      }
+    }
+
+    function primMST(graph) {
+      const nodes = Object.keys(graph);
+      const inMST = new Set();
+      const edges = [];
+      if (nodes.length === 0) return edges;
+
+      inMST.add(nodes[0]);
+
+      while (inMST.size < nodes.length) {
+        let minEdge = null;
+        let minWeight = Infinity;
+
+        for (const u of inMST) {
+          for (const [v, w] of Object.entries(graph[u])) {
+            if (inMST.has(v)) continue;
+            if (w < minWeight) {
+              minWeight = w;
+              minEdge = { u, v, w };
+            }
+          }
+        }
+
+        if (!minEdge) break;
+        inMST.add(minEdge.v);
+        edges.push(minEdge);
+      }
+      return edges;
+    }
+
+    document.getElementById("btn-mst").addEventListener("click", () => {
+      const mst = primMST(electricGraph);
+      highlightMSTEdges(mst);
+      const total = mst.reduce((acc, e) => acc + e.w, 0);
+      const box = document.getElementById("resultado-mst");
+      let texto = "Aristas en el MST (origen, destino, costo):\n";
+      mst.forEach(e => {
+        texto += `${e.u} – ${e.v} (costo ${e.w})\n`;
+      });
+      texto += `\nCosto total mínimo: ${total}.`;
+      box.textContent = texto;
+    });
+
+    document.getElementById("btn-reset-mst").addEventListener("click", () => {
+      clearMSTHighlight();
+      document.getElementById("resultado-mst").textContent =
+        "Resaltado limpiado. Vuelve a calcular el MST si lo deseas.";
+    });
+
+    // ========================================================
+    // 3. SISTEMA DE SEMÁFOROS – CICLO Y FALLOS
+    // ========================================================
+    const northLights = {
+      red: document.getElementById("north-red"),
+      yellow: document.getElementById("north-yellow"),
+      green: document.getElementById("north-green")
+    };
+    const southLights = {
+      red: document.getElementById("south-red"),
+      yellow: document.getElementById("south-yellow"),
+      green: document.getElementById("south-green")
+    };
+    const eastLights = {
+      red: document.getElementById("east-red"),
+      yellow: document.getElementById("east-yellow"),
+      green: document.getElementById("east-green")
+    };
+    const westLights = {
+      red: document.getElementById("west-red"),
+      yellow: document.getElementById("west-yellow"),
+      green: document.getElementById("west-green")
+    };
+
+    let semInterval = null;
+
+    const estados = [
+      { ns: "green",  ew: "red",    descripcion: "Norte-sur en verde, este-oeste en rojo." },
+      { ns: "yellow", ew: "red",    descripcion: "Norte-sur cambiando (amarillo), este-oeste en rojo." },
+      { ns: "red",    ew: "green",  descripcion: "Este-oeste en verde, norte-sur en rojo." },
+      { ns: "red",    ew: "yellow", descripcion: "Este-oeste cambiando (amarillo), norte-sur en rojo." }
+    ];
+
+    let estadoIndex = 0;
+
+    function apagarTodos() {
+      [northLights, southLights, eastLights, westLights].forEach(dir => {
+        Object.values(dir).forEach(l => l.classList.remove("on"));
+      });
+    }
+
+    function aplicarEstado(estado) {
+      apagarTodos();
+      if (estado.ns === "green") {
+        northLights.green.classList.add("on");
+        southLights.green.classList.add("on");
+        eastLights.red.classList.add("on");
+        westLights.red.classList.add("on");
+      } else if (estado.ns === "yellow") {
+        northLights.yellow.classList.add("on");
+        southLights.yellow.classList.add("on");
+        eastLights.red.classList.add("on");
+        westLights.red.classList.add("on");
+      } else if (estado.ns === "red" && estado.ew === "green") {
+        northLights.red.classList.add("on");
+        southLights.red.classList.add("on");
+        eastLights.green.classList.add("on");
+        westLights.green.classList.add("on");
+      } else if (estado.ns === "red" && estado.ew === "yellow") {
+        northLights.red.classList.add("on");
+        southLights.red.classList.add("on");
+        eastLights.yellow.classList.add("on");
+        westLights.yellow.classList.add("on");
+      }
+      document.getElementById("resultado-sem").textContent =
+        "Estado actual: " + estado.descripcion;
+    }
+
+    function iniciarCiclo() {
+      if (semInterval) return;
+      estadoIndex = 0;
+      aplicarEstado(estados[estadoIndex]);
+      semInterval = setInterval(() => {
+        estadoIndex = (estadoIndex + 1) % estados.length;
+        aplicarEstado(estados[estadoIndex]);
+      }, 2000);
+      document.getElementById("resultado-sem").textContent =
+        "Ciclo iniciado. Observa cómo alternan los flujos norte-sur y este-oeste.";
+    }
+
+    function detenerCiclo() {
+      if (semInterval) {
+        clearInterval(semInterval);
+        semInterval = null;
+      }
+      apagarTodos();
+      northLights.red.classList.add("on");
+      southLights.red.classList.add("on");
+      eastLights.red.classList.add("on");
+      westLights.red.classList.add("on");
+      document.getElementById("resultado-sem").textContent =
+        "Ciclo detenido. Todos los semáforos en rojo por seguridad.";
+    }
+
+    function simularFallo() {
+      if (semInterval) {
+        clearInterval(semInterval);
+        semInterval = null;
+      }
+      apagarTodos();
+      // Norte-sur se queda apagado (fallo), este-oeste funciona en verde
+      eastLights.green.classList.add("on");
+      westLights.green.classList.add("on");
+      document.getElementById("resultado-sem").textContent =
+        "Fallo simulado: semáforos norte-sur apagados. Solo este-oeste tiene paso.\n" +
+        "Puedes explicar cómo esto afecta los caminos posibles en el grafo de la intersección.";
+    }
+
+    document.getElementById("btn-start-sem").addEventListener("click", iniciarCiclo);
+    document.getElementById("btn-stop-sem").addEventListener("click", detenerCiclo);
+    document.getElementById("btn-fallo").addEventListener("click", simularFallo);
+
+    // Estado inicial: todos en rojo
+    detenerCiclo();
+  </script>
+</body>
+</html>
