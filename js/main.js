@@ -69,22 +69,6 @@ tabButtons.forEach((btn, index) => {
 const initiallyActive = tabButtons.find(btn => btn.classList.contains("active")) || tabButtons[0];
 activateTab(initiallyActive);
 
-// Flip cards clic + teclado
-document.querySelectorAll(".flip-card").forEach(card => {
-  const toggleCard = () => {
-    const flipped = card.classList.toggle("flipped");
-    card.setAttribute("aria-pressed", flipped ? "true" : "false");
-  };
-
-  card.addEventListener("click", toggleCard);
-  card.addEventListener("keydown", event => {
-    if (event.key === " " || event.key === "Enter") {
-      event.preventDefault();
-      toggleCard();
-    }
-  });
-});
-
 // ==========================
 // 1. RED DE TRANSPORTE – DIJKSTRA + BUS + TABLA
 // ==========================
@@ -119,6 +103,14 @@ let lastTransportPath = null;
 let busInterval = null;
 let transportHighlightTimeouts = [];
 let lastBusCoords = null;
+
+function stopBusAnimation() {
+  if (busInterval) {
+    clearInterval(busInterval);
+    busInterval = null;
+  }
+  if (busIcon) busIcon.classList.remove("bus-moving");
+}
 
 function buildTransportGraph() {
   const graph = {};
@@ -164,7 +156,7 @@ function highlightTransportNodes(path) {
 
 function clearTransportHighlight() {
   document.querySelectorAll("#transport-graph .edge").forEach(e => {
-    e.classList.remove("highlight");
+    e.classList.remove("highlight", "path-active");
   });
   clearTransportNodeHighlight();
   transportHighlightTimeouts.forEach(t => clearTimeout(t));
@@ -182,6 +174,7 @@ function highlightTransportPath(path) {
     const edgeEl = document.getElementById(id1) || document.getElementById(id2);
     const timeout = setTimeout(() => {
       if (edgeEl) edgeEl.classList.add("highlight");
+      if (edgeEl) edgeEl.classList.add("path-active");
     }, i * 220); // resalta de forma progresiva
     transportHighlightTimeouts.push(timeout);
   }
@@ -246,6 +239,9 @@ function renderDijkstraTrace(steps, origen) {
 
   if (!steps || steps.length === 0) {
     box.textContent = "No hay pasos para mostrar. Verifica los pesos y vuelve a intentar.";
+    box.classList.remove("show");
+    void box.offsetWidth;
+    box.classList.add("show");
     return;
   }
 
@@ -275,6 +271,9 @@ function renderDijkstraTrace(steps, origen) {
        + "</p>";
 
   box.innerHTML = html;
+  box.classList.remove("show");
+  void box.offsetWidth;
+  box.classList.add("show");
 }
 
 function reconstructPath(prev, start, end) {
@@ -310,7 +309,8 @@ function setBusPosition(x, y) {
 
 function animateBusAlong(path) {
   if (!path || path.length < 2 || !busIcon) return;
-  if (busInterval) clearInterval(busInterval);
+  stopBusAnimation();
+  busIcon.classList.add("bus-moving");
 
   let segIndex = 0;
   let step = 0;
@@ -334,7 +334,7 @@ function animateBusAlong(path) {
       segIndex++;
       step = 0;
       if (segIndex >= path.length - 1) {
-        clearInterval(busInterval);
+        stopBusAnimation();
       }
     }
   }, delay);
@@ -354,10 +354,16 @@ document.getElementById("btn-dijkstra").addEventListener("click", () => {
       ". Revisa que todas las aristas necesarias tengan un peso válido (> 0).";
     clearTransportHighlight();
     lastTransportPath = null;
-    if (busIcon) busIcon.style.opacity = "0";
+    if (busIcon) {
+      busIcon.style.opacity = "0";
+      busIcon.classList.remove("bus-moving");
+    }
     const tabla = document.getElementById("tabla-dijkstra");
     if (tabla) {
       tabla.textContent = "No se pudo completar el cálculo. Revisa los pesos y vuelve a intentarlo.";
+      tabla.classList.remove("show");
+      void tabla.offsetWidth;
+      tabla.classList.add("show");
     }
     return;
   }
@@ -381,12 +387,15 @@ document.getElementById("btn-reset-dijkstra").addEventListener("click", () => {
   document.getElementById("resultado-dijkstra").textContent =
     "Resaltado limpiado. Vuelve a calcular una ruta si lo deseas.";
   lastTransportPath = null;
-  if (busInterval) clearInterval(busInterval);
+  stopBusAnimation();
   if (busIcon) busIcon.style.opacity = "0";
 
   const tabla = document.getElementById("tabla-dijkstra");
   if (tabla) {
     tabla.textContent = "Aquí aparecerán los pasos de Dijkstra para la configuración actual.";
+    tabla.classList.remove("show");
+    void tabla.offsetWidth;
+    tabla.classList.add("show");
   }
 });
 
@@ -413,12 +422,15 @@ document.getElementById("btn-random-weights").addEventListener("click", () => {
     "Se generó un escenario alterno con distancias aleatorias. Ahora puedes recalcular rutas.";
   clearTransportHighlight();
   lastTransportPath = null;
-  if (busInterval) clearInterval(busInterval);
+  stopBusAnimation();
   if (busIcon) busIcon.style.opacity = "0";
 
   const tabla = document.getElementById("tabla-dijkstra");
   if (tabla) {
     tabla.textContent = "Se cambiaron las distancias. Vuelve a calcular para ver la nueva tabla de pasos.";
+    tabla.classList.remove("show");
+    void tabla.offsetWidth;
+    tabla.classList.add("show");
   }
 });
 
@@ -449,6 +461,16 @@ const electricEdges = [
 ];
 
 let mstHighlightTimeouts = [];
+const primStepsBody = document.getElementById("prim-steps-body");
+const primStepsPanel = document.getElementById("prim-steps-panel");
+const electricNodeMap = {
+  P: document.getElementById("electric-node-P"),
+  Q: document.getElementById("electric-node-Q"),
+  R: document.getElementById("electric-node-R"),
+  S: document.getElementById("electric-node-S"),
+  T: document.getElementById("electric-node-T"),
+  U: document.getElementById("electric-node-U")
+};
 
 function buildElectricGraph() {
   const graph = {};
@@ -484,6 +506,7 @@ function clearMSTHighlight() {
   });
   mstHighlightTimeouts.forEach(t => clearTimeout(t));
   mstHighlightTimeouts = [];
+  clearElectricNodeHighlight();
 }
 
 function highlightMSTEdges(edges) {
@@ -494,17 +517,33 @@ function highlightMSTEdges(edges) {
     const el = document.getElementById(id1) || document.getElementById(id2);
     const timeout = setTimeout(() => {
       if (el) el.classList.add("mst-highlight");
+      activateElectricNode(edge.u);
+      activateElectricNode(edge.v);
     }, index * 260);
     mstHighlightTimeouts.push(timeout);
   });
 }
 
+function activateElectricNode(nodeId) {
+  const node = electricNodeMap[nodeId];
+  if (node) node.classList.add("active");
+}
+
+function clearElectricNodeHighlight() {
+  Object.values(electricNodeMap).forEach(node => {
+    if (node) node.classList.remove("active");
+  });
+}
+
 function primMST(graph) {
   const nodes = Object.keys(graph);
-  if (nodes.length === 0) return [];
+  if (nodes.length === 0) return { edges: [], steps: [] };
   const inMST = new Set();
   const edges = [];
-  inMST.add(nodes[0]);
+  const steps = [];
+  const start = nodes[0];
+  inMST.add(start);
+  let totalCost = 0;
 
   while (inMST.size < nodes.length) {
     let minEdge = null;
@@ -523,19 +562,47 @@ function primMST(graph) {
     if (!minEdge) break; // grafo desconectado
     inMST.add(minEdge.v);
     edges.push(minEdge);
+    totalCost += minEdge.w;
+    steps.push({
+      iteration: edges.length,
+      node: minEdge.v,
+      edge: `${minEdge.u} – ${minEdge.v}`,
+      cost: totalCost
+    });
   }
-  return edges;
+  return { edges, steps };
 }
+
+function renderPrimSteps(steps) {
+  if (!primStepsBody) return;
+  if (!steps || steps.length === 0) {
+    primStepsBody.innerHTML = '<tr><td colspan="4">Calcula el MST para visualizar los pasos de Prim.</td></tr>';
+    if (primStepsPanel) primStepsPanel.classList.add("show");
+    return;
+  }
+
+  const rows = steps.map(step =>
+    `<tr><td>${step.iteration}</td><td>${step.node}</td><td>${step.edge}</td><td>${step.cost}</td></tr>`
+  ).join("");
+  primStepsBody.innerHTML = rows;
+  if (primStepsPanel) {
+    primStepsPanel.classList.remove("show");
+    requestAnimationFrame(() => primStepsPanel.classList.add("show"));
+  }
+}
+
+renderPrimSteps([]);
 
 document.getElementById("btn-mst").addEventListener("click", () => {
   const graph = buildElectricGraph();
-  const mst = primMST(graph);
+  const { edges: mst, steps } = primMST(graph);
   const box = document.getElementById("resultado-mst");
   const expectedEdges = electricNodes.length - 1;
 
   if (mst.length === 0 || mst.length < expectedEdges) {
     box.textContent = "No se pudo construir un MST completo. Verifica que todas las aristas necesarias tengan costos válidos (>0) y que el grafo esté conectado.";
     clearMSTHighlight();
+    renderPrimSteps([]);
     return;
   }
 
@@ -547,12 +614,14 @@ document.getElementById("btn-mst").addEventListener("click", () => {
   });
   texto += `\nCosto total mínimo para esta configuración: ${total}.`;
   box.textContent = texto;
+  renderPrimSteps(steps);
 });
 
 document.getElementById("btn-reset-mst").addEventListener("click", () => {
   clearMSTHighlight();
   document.getElementById("resultado-mst").textContent =
     "Resaltado limpiado. Edita costos y vuelve a calcular el MST si lo deseas.";
+  renderPrimSteps([]);
 });
 
 // ==========================
@@ -580,8 +649,23 @@ const westLights = {
   green: document.getElementById("west-green")
 };
 
+const glowNS = document.getElementById("glow-ns");
+const glowEW = document.getElementById("glow-ew");
+const cars = {
+  n: document.getElementById("car-n"),
+  s: document.getElementById("car-s"),
+  w: document.getElementById("car-w"),
+  e: document.getElementById("car-e")
+};
+const countdownRing = document.getElementById("countdown-ring");
+const countdownText = document.getElementById("countdown-text");
+const COUNTDOWN_CIRC = 2 * Math.PI * 52;
+
 let semTimeout = null;
 let semRunning = false;
+let countdownInterval = null;
+let semPhases = [];
+let semTableActiveIndex = null;
 
 function updateRangeLabels() {
   const nsVal = parseInt(document.getElementById("range-ns-green").value, 10);
@@ -591,6 +675,9 @@ function updateRangeLabels() {
   document.getElementById("val-ns-green").textContent = nsVal + " s";
   document.getElementById("val-ew-green").textContent = ewVal + " s";
   document.getElementById("val-yellow").textContent  = yVal + " s";
+  positionSliderBubble("range-ns-green", "val-ns-green");
+  positionSliderBubble("range-ew-green", "val-ew-green");
+  positionSliderBubble("range-yellow", "val-yellow");
 
   const total = nsVal + ewVal + 2 * yVal;
   if (total > 0) {
@@ -602,17 +689,154 @@ function updateRangeLabels() {
     document.getElementById("sem-y-perc").textContent =
       Math.round(2 * yVal / total * 100) + "%";
   }
+
+  updateSemPreviewTable();
 }
 
 ["range-ns-green","range-ew-green","range-yellow"].forEach(id => {
   document.getElementById(id).addEventListener("input", updateRangeLabels);
 });
 updateRangeLabels();
+window.addEventListener("resize", updateRangeLabels);
+
+function positionSliderBubble(rangeId, valueId) {
+  const slider = document.getElementById(rangeId);
+  const label = document.getElementById(valueId);
+  if (!slider || !label) return;
+  const min = parseFloat(slider.min);
+  const max = parseFloat(slider.max);
+  const val = parseFloat(slider.value);
+  const percent = (val - min) / (max - min || 1);
+  label.style.left = `${percent * 100}%`;
+}
+
+function buildSemPhasesFromSliders() {
+  const nsGreen = parseInt(document.getElementById("range-ns-green").value, 10);
+  const ewGreen = parseInt(document.getElementById("range-ew-green").value, 10);
+  const yellow = parseInt(document.getElementById("range-yellow").value, 10);
+
+  const phases = [
+    { name: "N–S Verde", direction: "Norte-Sur", duration: nsGreen, nsState: "Verde", ewState: "Rojo" },
+    { name: "N–S Amarillo", direction: "Transición N–S", duration: yellow, nsState: "Amarillo", ewState: "Rojo" },
+    { name: "E–O Verde", direction: "Este-Oeste", duration: ewGreen, nsState: "Rojo", ewState: "Verde" },
+    { name: "E–O Amarillo", direction: "Transición E–O", duration: yellow, nsState: "Rojo", ewState: "Amarillo" }
+  ];
+
+  let current = 0;
+  phases.forEach(phase => {
+    phase.start = current;
+    phase.end = current + phase.duration;
+    current = phase.end;
+  });
+
+  semPhases = phases;
+  return phases;
+}
+
+function renderSemTable(phases) {
+  const tbody = document.querySelector("#sem-steps-table tbody");
+  if (!tbody) return;
+  if (!phases || phases.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8">Ajusta los parámetros para ver las fases.</td></tr>';
+    semTableActiveIndex = null;
+    return;
+  }
+
+  const rows = phases.map((phase, idx) => `
+    <tr data-phase-index="${idx}">
+      <td>${idx + 1}</td>
+      <td>${phase.name}</td>
+      <td>${phase.direction}</td>
+      <td>${phase.duration}</td>
+      <td>${phase.start}</td>
+      <td>${phase.end}</td>
+      <td>${phase.nsState}</td>
+      <td>${phase.ewState}</td>
+    </tr>
+  `).join("");
+  tbody.innerHTML = rows;
+  semTableActiveIndex = null;
+}
+
+function updateSemPreviewTable() {
+  const phases = buildSemPhasesFromSliders();
+  renderSemTable(phases);
+  clearSemPhaseHighlight();
+}
+
+function highlightSemPhase(index) {
+  const tbody = document.querySelector("#sem-steps-table tbody");
+  if (!tbody) return;
+  tbody.querySelectorAll("tr").forEach(row => row.classList.remove("active-phase"));
+  const row = tbody.querySelector(`tr[data-phase-index="${index}"]`);
+  if (row) {
+    row.classList.add("active-phase");
+    semTableActiveIndex = index;
+  }
+}
+
+function clearSemPhaseHighlight() {
+  const tbody = document.querySelector("#sem-steps-table tbody");
+  if (!tbody) return;
+  tbody.querySelectorAll("tr.active-phase").forEach(row => row.classList.remove("active-phase"));
+  semTableActiveIndex = null;
+}
 
 function apagarTodosSemaforos() {
   [northLights, southLights, eastLights, westLights].forEach(dir => {
     Object.values(dir).forEach(l => l.classList.remove("on"));
   });
+}
+
+function setDirectionVisual(nsActive, ewActive, icon, message) {
+  if (glowNS) glowNS.classList.toggle("active", !!nsActive);
+  if (glowEW) glowEW.classList.toggle("active", !!ewActive);
+  if (cars.n) cars.n.classList.toggle("active", !!nsActive);
+  if (cars.s) cars.s.classList.toggle("active", !!nsActive);
+  if (cars.w) cars.w.classList.toggle("active", !!ewActive);
+  if (cars.e) cars.e.classList.toggle("active", !!ewActive);
+  if (icon && message) updateSemResultado(icon, message);
+}
+
+function updateSemResultado(icon, text) {
+  const box = document.getElementById("resultado-sem");
+  if (!box) return;
+  box.textContent = `${icon} ${text}`;
+}
+
+function startCountdown(durationMs) {
+  if (!countdownRing || !countdownText) return;
+  resetCountdown(true);
+  countdownRing.style.transition = "none";
+  countdownRing.style.strokeDashoffset = COUNTDOWN_CIRC;
+  requestAnimationFrame(() => {
+    countdownRing.style.transition = `stroke-dashoffset ${durationMs}ms linear`;
+    countdownRing.style.strokeDashoffset = 0;
+  });
+  countdownText.textContent = Math.ceil(durationMs / 1000) + "s";
+  const start = Date.now();
+  countdownInterval = setInterval(() => {
+    const elapsed = Date.now() - start;
+    const remaining = Math.max(0, durationMs - elapsed);
+    countdownText.textContent = Math.ceil(remaining / 1000) + "s";
+    if (remaining <= 0) {
+      resetCountdown();
+    }
+  }, 250);
+}
+
+function resetCountdown(skipText) {
+  if (countdownInterval) {
+    clearInterval(countdownInterval);
+    countdownInterval = null;
+  }
+  if (countdownRing) {
+    countdownRing.style.transition = "none";
+    countdownRing.style.strokeDashoffset = COUNTDOWN_CIRC;
+  }
+  if (!skipText && countdownText) {
+    countdownText.textContent = "0s";
+  }
 }
 
 function setEstadoNSverde() {
@@ -621,6 +845,7 @@ function setEstadoNSverde() {
   southLights.green.classList.add("on");
   eastLights.red.classList.add("on");
   westLights.red.classList.add("on");
+  setDirectionVisual(true, false, "🚦", "Flujo activo: Norte–Sur en verde, Este–Oeste en rojo.");
 }
 
 function setEstadoNSamarillo() {
@@ -629,6 +854,7 @@ function setEstadoNSamarillo() {
   southLights.yellow.classList.add("on");
   eastLights.red.classList.add("on");
   westLights.red.classList.add("on");
+  setDirectionVisual(true, false, "⚠️", "Transición: Norte–Sur en amarillo, Este–Oeste en rojo.");
 }
 
 function setEstadoEWverde() {
@@ -637,6 +863,7 @@ function setEstadoEWverde() {
   westLights.green.classList.add("on");
   northLights.red.classList.add("on");
   southLights.red.classList.add("on");
+  setDirectionVisual(false, true, "🚦", "Flujo activo: Este–Oeste en verde, Norte–Sur en rojo.");
 }
 
 function setEstadoEWamarillo() {
@@ -645,6 +872,7 @@ function setEstadoEWamarillo() {
   westLights.yellow.classList.add("on");
   northLights.red.classList.add("on");
   southLights.red.classList.add("on");
+  setDirectionVisual(false, true, "⚠️", "Transición: Este–Oeste en amarillo, Norte–Sur en rojo.");
 }
 
 function setAllRed() {
@@ -653,6 +881,7 @@ function setAllRed() {
   southLights.red.classList.add("on");
   eastLights.red.classList.add("on");
   westLights.red.classList.add("on");
+  setDirectionVisual(false, false);
 }
 
 function stopSemCycle() {
@@ -661,6 +890,8 @@ function stopSemCycle() {
     clearTimeout(semTimeout);
     semTimeout = null;
   }
+  resetCountdown();
+  clearSemPhaseHighlight();
 }
 
 function startSemCycle() {
@@ -670,6 +901,7 @@ function startSemCycle() {
   const ewGreen = parseInt(document.getElementById("range-ew-green").value, 10) * 1000;
   const yellow  = parseInt(document.getElementById("range-yellow").value, 10) * 1000;
   const box = document.getElementById("resultado-sem");
+  updateSemPreviewTable();
 
   const fases = [
     { fn: setEstadoNSverde,    dur: nsGreen,
@@ -687,7 +919,8 @@ function startSemCycle() {
     if (!semRunning) return;
     const fase = fases[index];
     fase.fn();
-    box.textContent = "Estado actual: " + fase.desc;
+    highlightSemPhase(index);
+    startCountdown(fase.dur);
     semTimeout = setTimeout(() => {
       index = (index + 1) % fases.length;
       runPhase();
@@ -703,8 +936,7 @@ document.getElementById("btn-start-sem").addEventListener("click", () => {
 document.getElementById("btn-stop-sem").addEventListener("click", () => {
   stopSemCycle();
   setAllRed();
-  document.getElementById("resultado-sem").textContent =
-    "Ciclo detenido. Todos los semáforos en rojo (estado seguro).";
+  updateSemResultado("🛑", "Ciclo detenido. Todos los semáforos en rojo (estado seguro).");
 });
 
 document.getElementById("btn-fallo").addEventListener("click", () => {
@@ -713,10 +945,12 @@ document.getElementById("btn-fallo").addEventListener("click", () => {
   // Norte-sur apagado, solo este-oeste pasa
   eastLights.green.classList.add("on");
   westLights.green.classList.add("on");
-  document.getElementById("resultado-sem").textContent =
-    "Fallo simulado: semáforos norte-sur apagados. Solo este-oeste tiene paso.\n" +
-    "En el grafo de tráfico, esto equivale a desactivar las aristas norte-sur.";
+  setDirectionVisual(false, true);
+  updateSemResultado("⚠️", "Fallo simulado: semáforos norte-sur apagados. Solo este-oeste tiene paso.");
+  resetCountdown();
+  clearSemPhaseHighlight();
 });
 
 // Estado inicial: todo rojo
 setAllRed();
+updateSemResultado("🛑", "Todos los semáforos en rojo (estado seguro).");

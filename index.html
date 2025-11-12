@@ -56,150 +56,128 @@
 
   <!-- TEORÍA -->
   <section id="teoria" class="view active" role="tabpanel" aria-labelledby="tab-teoria">
-    <span class="badge"><span class="badge-dot"></span> Qué hace cada parte de la maqueta</span>
-    <h2>Resumen teórico y cómo usar la maqueta digital</h2>
-    <p>
-      Esta página modela tres sistemas reales usando <strong>grafos</strong>:
-      una red de transporte, una red de distribución (eléctrica/agua) y un sistema de semáforos.
-      En todos los casos:
-    </p>
-    <ul style="font-size:0.9rem; color:#cbd5f5;">
-      <li>Los <strong>nodos</strong> representan lugares o dispositivos (paradas, subestaciones, cruces).</li>
-      <li>Las <strong>aristas</strong> representan conexiones (carreteras, tuberías, calles).</li>
-      <li>Los <strong>pesos</strong> representan distancia, costo o tiempo.</li>
-      <li>Tú puedes <strong>modificar parámetros</strong> y ver nuevos escenarios.</li>
-    </ul>
-
-    <div class="flip-grid">
-      <!-- Flip 1: Grafo -->
-      <div class="flip-card" tabindex="0" role="button" aria-pressed="false">
-        <div class="flip-inner">
-          <div class="flip-face flip-front">
-            <h3>Grafos y grafos ponderados</h3>
-            <p>Un mapa, una red eléctrica o un cruce de calles se pueden ver como un grafo.</p>
-            <pre>
-●───●───●
- \   │
-  \  ●
-(pesos en las aristas)
-            </pre>
-            <p style="font-size:0.8rem;color:#9ca3af;">
-              Pulsa la tarjeta para ver la explicación rápida.
-            </p>
+    <div class="theory-hero">
+      <div class="hero-copy">
+        <span class="badge"><span class="badge-dot"></span> Qué hace cada parte de la maqueta</span>
+        <h2>Esta maqueta digital combina ciencia, ingeniería y matemática para contar historias con grafos.</h2>
+        <p>
+          Modelamos una <strong>red de transporte</strong>, una <strong>red de distribución</strong> y un
+          <strong>sistema de semáforos</strong>. Al modificar sus pesos y conexiones puedes ver cómo un cambio local
+          impacta al sistema completo.
+        </p>
+        <div class="hero-points">
+          <div class="hero-chip">
+            <span>⚙️</span>
+            <div>
+              <p>Simulación editable</p>
+              <small>Modifica distancias, costos y tiempos.</small>
+            </div>
           </div>
-          <div class="flip-face flip-back">
-            <h3>Definiciones clave</h3>
-            <ul>
-              <li><strong>Vértices</strong>: puntos de interés (lugares, estaciones, cruces).</li>
-              <li><strong>Aristas</strong>: conexiones entre vértices.</li>
-              <li><strong>Peso</strong>: número asociado a una arista
-                (km, costo, tiempo, capacidad).</li>
-              <li>Un <strong>grafo ponderado</strong> es un grafo donde
-                cada arista tiene un peso.</li>
-            </ul>
+          <div class="hero-chip">
+            <span>🧠</span>
+            <div>
+              <p>Algoritmos clásicos</p>
+              <small>Dijkstra, Prim y lógica de ciclos.</small>
+            </div>
+          </div>
+          <div class="hero-chip">
+            <span>🌐</span>
+            <div>
+              <p>Sistemas conectados</p>
+              <small>Transporte ↔ Energía ↔ Tráfico.</small>
+            </div>
           </div>
         </div>
       </div>
-
-      <!-- Flip 2: Dijkstra -->
-      <div class="flip-card" tabindex="0" role="button" aria-pressed="false">
-        <div class="flip-inner">
-          <div class="flip-face flip-front">
-            <h3>Red de transporte y Dijkstra</h3>
-            <p>Buscamos la ruta más corta entre dos puntos de la ciudad.</p>
-            <pre>
-A──4──B──5──D
-│  \1 │
-2   \ C
- \    \
-  E──3──F
-            </pre>
-            <p style="font-size:0.8rem;color:#9ca3af;">
-              El bus recorre el camino resaltado con distancia mínima.
-            </p>
-          </div>
-          <div class="flip-face flip-back">
-            <h3>Algoritmo de Dijkstra</h3>
-            <ul>
-              <li>Distancia inicial del origen = 0; resto = ∞.</li>
-              <li>Tomar siempre el nodo no visitado con menor distancia.</li>
-              <li><strong>Relajar</strong> sus vecinos:
-                si pasar por él mejora la distancia, se actualiza.</li>
-              <li>En la maqueta:
-                <ul>
-                  <li>Eliges origen y destino.</li>
-                  <li>Se calcula el camino más corto con los pesos que hayas puesto.</li>
-                  <li>Se resalta la ruta y se anima el bus.</li>
-                </ul>
-              </li>
-            </ul>
-          </div>
-        </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="graph-glow"></div>
+        <svg class="graph-orbit" viewBox="0 0 320 320">
+          <circle class="orbit" cx="160" cy="160" r="110" />
+          <circle class="orbit" cx="160" cy="160" r="70" />
+          <line class="orbit-line" x1="160" y1="160" x2="60" y2="90" />
+          <line class="orbit-line" x1="160" y1="160" x2="260" y2="90" />
+          <line class="orbit-line" x1="160" y1="160" x2="160" y2="270" />
+          <circle class="orbit-node center" cx="160" cy="160" r="22"></circle>
+          <text class="node-icon" x="160" y="165">Σ</text>
+          <circle class="orbit-node transport" cx="60" cy="90" r="20"></circle>
+          <text class="node-icon" x="60" y="95">🚍</text>
+          <circle class="orbit-node energia" cx="260" cy="90" r="20"></circle>
+          <text class="node-icon" x="260" y="95">💧⚡</text>
+          <circle class="orbit-node semaforos" cx="160" cy="270" r="20"></circle>
+          <text class="node-icon" x="160" y="275">🚦</text>
+        </svg>
+        <div class="graph-caption">Los tres modelos comparten un mismo lenguaje: grafos ponderados.</div>
       </div>
+    </div>
 
-      <!-- Flip 3: MST -->
-      <div class="flip-card" tabindex="0" role="button" aria-pressed="false">
-        <div class="flip-inner">
-          <div class="flip-face flip-front">
-            <h3>Red eléctrica / agua y MST</h3>
-            <p>Queremos conectar todos los nodos al menor costo.</p>
-            <pre>
-   P───Q───S───U
-    \  │  /
-      R──T
-(MST = árbol sin ciclos)
-            </pre>
-          </div>
-          <div class="flip-face flip-back">
-            <h3>Árbol de Expansión Mínima</h3>
-            <ul>
-              <li>Un <strong>MST</strong> conecta todos los nodos:</li>
-              <li>♦ Sin ciclos.</li>
-              <li>♦ Con costo total mínimo.</li>
-              <li>Prim:
-                <ul>
-                  <li>Empieza en un nodo cualquiera.</li>
-                  <li>Agrega siempre la arista más barata que conecta
-                    un nodo nuevo al árbol actual.</li>
-                  <li>En la maqueta, esas aristas se ven en verde.</li>
-                </ul>
-              </li>
-            </ul>
-          </div>
-        </div>
+    <div class="concept-grid" role="list">
+      <div class="concept-card" role="listitem" tabindex="0">
+        <div class="concept-icon">🧭</div>
+        <p class="concept-title">Nodos</p>
+        <p class="concept-def">Representan terminales, subestaciones o cruces. Son los vértices del grafo.</p>
       </div>
+      <div class="concept-card" role="listitem" tabindex="0">
+        <div class="concept-icon">🕸️</div>
+        <p class="concept-title">Aristas</p>
+        <p class="concept-def">Conectan nodos mediante carreteras, tuberías o calles. Definen cómo fluye la información.</p>
+      </div>
+      <div class="concept-card" role="listitem" tabindex="0">
+        <div class="concept-icon">🎯</div>
+        <p class="concept-title">Pesos</p>
+        <p class="concept-def">Distancia, costo o tiempo. Cambiar un peso altera rutas óptimas, MST y fases de semáforos.</p>
+      </div>
+      <div class="concept-card" role="listitem" tabindex="0">
+        <div class="concept-icon">🔀</div>
+        <p class="concept-title">Escenarios</p>
+        <p class="concept-def">Prueba fallos, rutas alternativas y nuevas tarifas para comprender la resiliencia del sistema.</p>
+      </div>
+    </div>
 
-      <!-- Flip 4: Semáforos -->
-      <div class="flip-card" tabindex="0" role="button" aria-pressed="false">
-        <div class="flip-inner">
-          <div class="flip-face flip-front">
-            <h3>Sistema de semáforos</h3>
-            <p>El cruce alterna el flujo Norte–Sur y Este–Oeste.</p>
-            <pre>
-N ↑   │   ↑ N
-  │   │   │
-W ├───┼───┤ E
-  │   │   │
-S ↓   │   ↓ S
-            </pre>
-          </div>
-          <div class="flip-face flip-back">
-            <h3>Grafos y tiempos</h3>
-            <ul>
-              <li>Cada calle es una arista.</li>
-              <li>Cuando una dirección está en verde, esas aristas están activas.</li>
-              <li>Los sliders controlan:
-                <ul>
-                  <li>Segundos de verde para N–S.</li>
-                  <li>Segundos de verde para E–O.</li>
-                  <li>Segundos de amarillo.</li>
-                </ul>
-              </li>
-              <li>Más tiempo verde ⇒ más “capacidad” para esa dirección
-                en el grafo de tráfico.</li>
-            </ul>
-          </div>
-        </div>
+    <div class="systems-panel">
+      <div class="systems-diagram-text">
+        <h3>¿Cómo se conectan los modelos?</h3>
+        <p>
+          Cada módulo usa un algoritmo distinto, pero comparten nodos clave. Si el transporte falla en un distrito,
+          el consumo eléctrico cambia y la sincronización de semáforos debe adaptarse. Este panel te ayuda a visualizar
+          esa conversación entre redes.
+        </p>
+        <ul class="diagram-points">
+          <li><span>1</span> Dijkstra determina rutas preferidas y cargas en avenidas principales.</li>
+          <li><span>2</span> Prim optimiza el tendido para alimentar estaciones y bombas de agua.</li>
+          <li><span>3</span> Los semáforos ajustan fases para mantener estable el flujo vehicular.</li>
+        </ul>
+      </div>
+      <div class="systems-cards">
+        <article class="system-card transport">
+          <header>
+            <span>🚍</span>
+            <div>
+              <p>Red de transporte</p>
+              <small>Dijkstra + animación del bus</small>
+            </div>
+          </header>
+          <p>Explora la ruta más corta entre barrios. Destaca los nodos visitados y muestra la tabla de distancias.</p>
+        </article>
+        <article class="system-card energia">
+          <header>
+            <span>💧⚡</span>
+            <div>
+              <p>Red eléctrica / agua</p>
+              <small>Árbol de expansión mínima</small>
+            </div>
+          </header>
+          <p>Ajusta costos y descubre qué aristas conectan toda la ciudad con el menor gasto posible.</p>
+        </article>
+        <article class="system-card semaforos">
+          <header>
+            <span>🚦</span>
+            <div>
+              <p>Sistema de semáforos</p>
+              <small>Ciclos y fallos controlados</small>
+            </div>
+          </header>
+          <p>Manipula los tiempos de verde/amarillo y simula fallos para entender la capacidad de cada dirección.</p>
+        </article>
       </div>
     </div>
 
@@ -332,7 +310,24 @@ S ↓   │   ↓ S
           <div class="map-district map-d3"></div>
           <div class="map-district map-d4"></div>
 
-          <svg id="transport-graph" viewBox="0 0 500 320">
+          <svg id="transport-graph" viewBox="0 0 520 320">
+            <defs>
+              <linearGradient id="edge-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#22d3ee">
+                  <animate attributeName="stop-color" values="#22d3ee;#4ade80;#22d3ee" dur="6s" repeatCount="indefinite" />
+                </stop>
+                <stop offset="100%" stop-color="#4ade80">
+                  <animate attributeName="stop-color" values="#4ade80;#22d3ee;#4ade80" dur="6s" repeatCount="indefinite" />
+                </stop>
+              </linearGradient>
+              <filter id="node-glow" x="-40%" y="-40%" width="180%" height="180%">
+                <feGaussianBlur stdDeviation="4" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
             <!-- Carreteras gruesas tipo mapa -->
             <line class="road-edge" x1="80" y1="70" x2="250" y2="60" />
             <line class="road-edge" x1="80" y1="70" x2="140" y2="170" />
@@ -356,15 +351,15 @@ S ↓   │   ↓ S
             <line class="road-lane" x1="200" y1="260" x2="430" y2="230" />
 
             <!-- Aristas para resaltado -->
-            <line id="edge-A-B" class="edge" x1="80" y1="70" x2="250" y2="60" />
-            <line id="edge-A-C" class="edge" x1="80" y1="70" x2="140" y2="170" />
-            <line id="edge-B-C" class="edge" x1="250" y1="60" x2="140" y2="170" />
-            <line id="edge-B-D" class="edge" x1="250" y1="60" x2="350" y2="150" />
-            <line id="edge-C-D" class="edge" x1="140" y1="170" x2="350" y2="150" />
-            <line id="edge-C-E" class="edge" x1="140" y1="170" x2="200" y2="260" />
-            <line id="edge-D-E" class="edge" x1="350" y1="150" x2="200" y2="260" />
-            <line id="edge-D-F" class="edge" x1="350" y1="150" x2="430" y2="230" />
-            <line id="edge-E-F" class="edge" x1="200" y1="260" x2="430" y2="230" />
+            <line id="edge-A-B" class="edge neon-edge" x1="80" y1="70" x2="250" y2="60" />
+            <line id="edge-A-C" class="edge neon-edge" x1="80" y1="70" x2="140" y2="170" />
+            <line id="edge-B-C" class="edge neon-edge" x1="250" y1="60" x2="140" y2="170" />
+            <line id="edge-B-D" class="edge neon-edge" x1="250" y1="60" x2="350" y2="150" />
+            <line id="edge-C-D" class="edge neon-edge" x1="140" y1="170" x2="350" y2="150" />
+            <line id="edge-C-E" class="edge neon-edge" x1="140" y1="170" x2="200" y2="260" />
+            <line id="edge-D-E" class="edge neon-edge" x1="350" y1="150" x2="200" y2="260" />
+            <line id="edge-D-F" class="edge neon-edge" x1="350" y1="150" x2="430" y2="230" />
+            <line id="edge-E-F" class="edge neon-edge" x1="200" y1="260" x2="430" y2="230" />
 
             <!-- Pesos (distancias) -->
             <text id="label-A-B" class="weight-label" x="165" y="55">4 km</text>
@@ -378,29 +373,41 @@ S ↓   │   ↓ S
             <text id="label-E-F" class="weight-label" x="320" y="250">3 km</text>
 
             <!-- Nodos -->
-            <circle id="node-A" class="node" cx="80" cy="70" r="15" />
-            <text class="node-label" x="80" y="70">A</text>
-            <text class="node-desc"  x="80" y="92">🚌 Terminal</text>
+            <g class="node-group">
+              <circle id="node-A" class="node" cx="80" cy="70" r="15" />
+              <text class="node-label" x="80" y="70">A</text>
+              <text class="node-desc"  x="80" y="95">Terminal</text>
+            </g>
 
-            <circle id="node-B" class="node" cx="250" cy="60" r="15" />
-            <text class="node-label" x="250" y="60">B</text>
-            <text class="node-desc"  x="250" y="82">🏙 Centro</text>
+            <g class="node-group">
+              <circle id="node-B" class="node" cx="250" cy="60" r="15" />
+              <text class="node-label" x="250" y="60">B</text>
+              <text class="node-desc"  x="250" y="85">Centro</text>
+            </g>
 
-            <circle id="node-C" class="node" cx="140" cy="170" r="15" />
-            <text class="node-label" x="140" y="170">C</text>
-            <text class="node-desc"  x="140" y="192">🛒 Mercado</text>
+            <g class="node-group">
+              <circle id="node-C" class="node" cx="140" cy="170" r="15" />
+              <text class="node-label" x="140" y="170">C</text>
+              <text class="node-desc"  x="140" y="195">Mercado</text>
+            </g>
 
-            <circle id="node-D" class="node" cx="350" cy="150" r="15" />
-            <text class="node-label" x="350" y="150">D</text>
-            <text class="node-desc"  x="350" y="172">🎓 Univ.</text>
+            <g class="node-group">
+              <circle id="node-D" class="node" cx="350" cy="150" r="15" />
+              <text class="node-label" x="350" y="150">D</text>
+              <text class="node-desc"  x="350" y="175">Universidad</text>
+            </g>
 
-            <circle id="node-E" class="node" cx="200" cy="260" r="15" />
-            <text class="node-label" x="200" y="260">E</text>
-            <text class="node-desc"  x="200" y="282">🏥 Hospital</text>
+            <g class="node-group">
+              <circle id="node-E" class="node" cx="200" cy="260" r="15" />
+              <text class="node-label" x="200" y="260">E</text>
+              <text class="node-desc"  x="200" y="285">Hospital</text>
+            </g>
 
-            <circle id="node-F" class="node" cx="430" cy="230" r="15" />
-            <text class="node-label" x="430" y="230">F</text>
-            <text class="node-desc"  x="430" y="252">🏬 Centro Com.</text>
+            <g class="node-group">
+              <circle id="node-F" class="node" cx="430" cy="230" r="15" />
+              <text class="node-label" x="430" y="230">F</text>
+              <text class="node-desc"  x="430" y="255">Centro Comercial</text>
+            </g>
           </svg>
           <div id="bus-icon" class="bus-icon">🚍</div>
         </div>
@@ -468,7 +475,7 @@ S ↓   │   ↓ S
             3) Presiona “Calcular ruta más corta”.
           </div>
 
-          <div class="result-box" id="tabla-dijkstra">
+          <div class="result-box table-output show" id="tabla-dijkstra">
             Aquí aparecerán los pasos de Dijkstra para la configuración actual.
           </div>
         </div>
@@ -490,60 +497,72 @@ S ↓   │   ↓ S
       <div class="panel">
         <h3>Red de distribución ⚡ / 💧</h3>
         <svg id="electric-graph" viewBox="0 0 500 320">
-          <!-- Tubos/cables gruesos -->
-          <line class="pipe-edge" x1="70" y1="80" x2="230" y2="60" />
-          <line class="pipe-edge" x1="70" y1="80" x2="140" y2="200" />
-          <line class="pipe-edge" x1="230" y1="60" x2="140" y2="200" />
-          <line class="pipe-edge" x1="230" y1="60" x2="360" y2="90" />
-          <line class="pipe-edge" x1="140" y1="200" x2="260" y2="250" />
-          <line class="pipe-edge" x1="360" y1="90" x2="260" y2="250" />
-          <line class="pipe-edge" x1="360" y1="90" x2="430" y2="210" />
-          <line class="pipe-edge" x1="260" y1="250" x2="430" y2="210" />
-
-          <!-- Tubos interiores (aristas MST) -->
-          <line id="edge-P-Q" class="pipe-inner" x1="70" y1="80" x2="230" y2="60" />
-          <line id="edge-P-R" class="pipe-inner" x1="70" y1="80" x2="140" y2="200" />
-          <line id="edge-Q-R" class="pipe-inner" x1="230" y1="60" x2="140" y2="200" />
-          <line id="edge-Q-S" class="pipe-inner" x1="230" y1="60" x2="360" y2="90" />
-          <line id="edge-R-T" class="pipe-inner" x1="140" y1="200" x2="260" y2="250" />
-          <line id="edge-S-T" class="pipe-inner" x1="360" y1="90" x2="260" y2="250" />
-          <line id="edge-S-U" class="pipe-inner" x1="360" y1="90" x2="430" y2="210" />
-          <line id="edge-T-U" class="pipe-inner" x1="260" y1="250" x2="430" y2="210" />
-
-          <!-- Pesos (costos) -->
-          <text id="cost-P-Q" class="weight-label" x="150" y="60">6</text>
-          <text id="cost-P-R" class="weight-label" x="100" y="145">4</text>
-          <text id="cost-Q-R" class="weight-label" x="185" y="140">5</text>
-          <text id="cost-Q-S" class="weight-label" x="300" y="65">3</text>
-          <text id="cost-R-T" class="weight-label" x="205" y="235">4</text>
-          <text id="cost-S-T" class="weight-label" x="315" y="180">7</text>
-          <text id="cost-S-U" class="weight-label" x="395" y="150">2</text>
-          <text id="cost-T-U" class="weight-label" x="345" y="240">6</text>
-
-          <!-- Nodos -->
-          <circle class="node" cx="70" cy="80" r="15" />
-          <text class="node-label" x="70" y="80">P</text>
-          <text class="node-desc" x="70" y="102">⚙️ Planta</text>
-
-          <circle class="node" cx="230" cy="60" r="15" />
-          <text class="node-label" x="230" y="60">Q</text>
-          <text class="node-desc" x="230" y="82">⚡ Subest. N</text>
-
-          <circle class="node" cx="140" cy="200" r="15" />
-          <text class="node-label" x="140" y="200">R</text>
-          <text class="node-desc" x="140" y="222">⚡ Subest. S</text>
-
-          <circle class="node" cx="360" cy="90" r="15" />
-          <text class="node-label" x="360" y="90">S</text>
-          <text class="node-desc" x="360" y="112">💡 Nodo Este</text>
-
-          <circle class="node" cx="260" cy="250" r="15" />
-          <text class="node-label" x="260" y="250">T</text>
-          <text class="node-desc" x="260" y="272">💡 Nodo Oeste</text>
-
-          <circle class="node" cx="430" cy="210" r="15" />
-          <text class="node-label" x="430" y="210">U</text>
-          <text class="node-desc" x="430" y="232">🏠 Cliente</text>
+          <defs>
+            <linearGradient id="pipe-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#38bdf8" />
+              <stop offset="100%" stop-color="#34d399" />
+            </linearGradient>
+            <linearGradient id="panel-blue" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="rgba(59,130,246,0.15)" />
+              <stop offset="100%" stop-color="rgba(34,197,94,0.1)" />
+            </linearGradient>
+            <pattern id="electric-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+              <path d="M40 0 L0 0 0 40" fill="none" stroke="rgba(148,163,184,0.15)" stroke-width="1" />
+            </pattern>
+            <pattern id="tech-pattern" width="12" height="12" patternUnits="userSpaceOnUse">
+              <path d="M0 6 L6 0 L12 6 L6 12 Z" fill="none" stroke="rgba(148,163,184,0.08)" stroke-width="0.5" />
+            </pattern>
+          </defs>
+          <g class="electric-bg">
+            <rect width="500" height="320" fill="url(#electric-grid)" />
+            <rect x="-30" y="30" width="220" height="120" fill="url(#panel-blue)" opacity="0.35" />
+            <rect x="280" y="160" width="200" height="130" fill="url(#panel-blue)" opacity="0.25" />
+            <rect width="500" height="320" fill="url(#tech-pattern)" />
+          </g>
+          <g class="electric-edges-base">
+            <line class="pipe-edge" x1="70" y1="80" x2="230" y2="60" />
+            <line class="pipe-edge" x1="70" y1="80" x2="140" y2="200" />
+            <line class="pipe-edge" x1="230" y1="60" x2="140" y2="200" />
+            <line class="pipe-edge" x1="230" y1="60" x2="360" y2="90" />
+            <line class="pipe-edge" x1="140" y1="200" x2="260" y2="250" />
+            <line class="pipe-edge" x1="360" y1="90" x2="260" y2="250" />
+            <line class="pipe-edge" x1="360" y1="90" x2="430" y2="210" />
+            <line class="pipe-edge" x1="260" y1="250" x2="430" y2="210" />
+          </g>
+          <g class="electric-edges-mst">
+            <line id="edge-P-Q" class="pipe-inner" x1="70" y1="80" x2="230" y2="60" />
+            <line id="edge-P-R" class="pipe-inner" x1="70" y1="80" x2="140" y2="200" />
+            <line id="edge-Q-R" class="pipe-inner" x1="230" y1="60" x2="140" y2="200" />
+            <line id="edge-Q-S" class="pipe-inner" x1="230" y1="60" x2="360" y2="90" />
+            <line id="edge-R-T" class="pipe-inner" x1="140" y1="200" x2="260" y2="250" />
+            <line id="edge-S-T" class="pipe-inner" x1="360" y1="90" x2="260" y2="250" />
+            <line id="edge-S-U" class="pipe-inner" x1="360" y1="90" x2="430" y2="210" />
+            <line id="edge-T-U" class="pipe-inner" x1="260" y1="250" x2="430" y2="210" />
+          </g>
+          <g class="electric-nodes">
+            <circle class="node electric-node" id="electric-node-P" data-node="P" cx="70" cy="80" r="15" />
+            <circle class="node electric-node" id="electric-node-Q" data-node="Q" cx="230" cy="60" r="15" />
+            <circle class="node electric-node" id="electric-node-R" data-node="R" cx="140" cy="200" r="15" />
+            <circle class="node electric-node" id="electric-node-S" data-node="S" cx="360" cy="90" r="15" />
+            <circle class="node electric-node" id="electric-node-T" data-node="T" cx="260" cy="250" r="15" />
+            <circle class="node electric-node" id="electric-node-U" data-node="U" cx="430" cy="210" r="15" />
+          </g>
+          <g class="electric-labels">
+            <text id="cost-P-Q" class="weight-label" x="150" y="60">6</text>
+            <text id="cost-P-R" class="weight-label" x="100" y="145">4</text>
+            <text id="cost-Q-R" class="weight-label" x="185" y="140">5</text>
+            <text id="cost-Q-S" class="weight-label" x="300" y="65">3</text>
+            <text id="cost-R-T" class="weight-label" x="205" y="235">4</text>
+            <text id="cost-S-T" class="weight-label" x="315" y="180">7</text>
+            <text id="cost-S-U" class="weight-label" x="395" y="150">2</text>
+            <text id="cost-T-U" class="weight-label" x="345" y="240">6</text>
+            <text class="node-title" x="70" y="60">P – Planta</text>
+            <text class="node-title" x="230" y="40">Q – Nodo Norte</text>
+            <text class="node-title" x="140" y="180">R – Subestación</text>
+            <text class="node-title" x="360" y="70">S – Nodo Este</text>
+            <text class="node-title" x="260" y="230">T – Nodo Sur</text>
+            <text class="node-title" x="430" y="190">U – Cliente</text>
+          </g>
         </svg>
       </div>
 
@@ -578,6 +597,25 @@ S ↓   │   ↓ S
             Edita los costos si quieres probar otro escenario y luego presiona “Calcular y resaltar MST”.
           </div>
         </div>
+        <div class="prim-steps-panel" id="prim-steps-panel">
+          <div class="prim-steps-header">
+            <h4>Proceso paso a paso del algoritmo de Prim</h4>
+            <p>En cada iteración agregamos un nodo nuevo y actualizamos el costo total del tendido.</p>
+          </div>
+          <table class="prim-steps-table">
+            <thead>
+              <tr>
+                <th>Iteración</th>
+                <th>Nodo agregado</th>
+                <th>Arista elegida</th>
+                <th>Costo acumulado</th>
+              </tr>
+            </thead>
+            <tbody id="prim-steps-body">
+              <tr><td colspan="4">Calcula el MST para visualizar los pasos de Prim.</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </section>
@@ -593,13 +631,15 @@ S ↓   │   ↓ S
 
     <div class="flex">
       <div class="panel">
-        <h3>Intersección y semáforos 🚦</h3>
+        <h3>Intersección inteligente 🚦</h3>
         <div class="intersection">
           <div class="road horizontal">
             <div class="lane-line"></div>
+            <div class="direction-glow" id="glow-ew"></div>
           </div>
           <div class="road vertical">
             <div class="lane-line-vert"></div>
+            <div class="direction-glow" id="glow-ns"></div>
           </div>
 
           <div class="light-box north">
@@ -626,30 +666,43 @@ S ↓   │   ↓ S
             <div id="east-green" class="light green"></div>
           </div>
 
+          <div class="traffic-car car-n" id="car-n">🚗</div>
+          <div class="traffic-car car-s" id="car-s">🚗</div>
+          <div class="traffic-car car-w" id="car-w">🚗</div>
+          <div class="traffic-car car-e" id="car-e">🚗</div>
+
           <div class="dir-label dir-n">N</div>
           <div class="dir-label dir-s">S</div>
           <div class="dir-label dir-w">O</div>
           <div class="dir-label dir-e">E</div>
+
+          <div class="cycle-countdown" id="cycle-countdown">
+            <svg viewBox="0 0 120 120">
+              <circle class="countdown-bg" cx="60" cy="60" r="52" />
+              <circle class="countdown-ring" id="countdown-ring" cx="60" cy="60" r="52" />
+            </svg>
+            <span id="countdown-text">0s</span>
+          </div>
         </div>
       </div>
 
       <div class="panel">
         <h3>Tiempos de ciclo y simulación</h3>
         <div class="controls">
-          <div>
-            <label>Verde norte-sur (seg)</label>
-            <input id="range-ns-green" type="range" min="2" max="10" value="4">
-            <div class="range-value">Actual: <span id="val-ns-green">4 s</span></div>
+          <div class="slider-control">
+            <label>🟢 Verde norte-sur (seg)</label>
+            <input id="range-ns-green" class="neon-slider" type="range" min="2" max="10" value="4">
+            <span class="slider-value" id="val-ns-green">4 s</span>
           </div>
-          <div>
-            <label>Verde este-oeste (seg)</label>
-            <input id="range-ew-green" type="range" min="2" max="10" value="4">
-            <div class="range-value">Actual: <span id="val-ew-green">4 s</span></div>
+          <div class="slider-control">
+            <label>🟢 Verde este-oeste (seg)</label>
+            <input id="range-ew-green" class="neon-slider" type="range" min="2" max="10" value="4">
+            <span class="slider-value" id="val-ew-green">4 s</span>
           </div>
-          <div>
-            <label>Amarillo (aplica a ambos) (seg)</label>
-            <input id="range-yellow" type="range" min="1" max="5" value="2">
-            <div class="range-value">Actual: <span id="val-yellow">2 s</span></div>
+          <div class="slider-control">
+            <label>🟡 Amarillo (aplica a ambos) (seg)</label>
+            <input id="range-yellow" class="neon-slider" type="range" min="1" max="5" value="2">
+            <span class="slider-value" id="val-yellow">2 s</span>
           </div>
 
           <div class="range-value" style="margin-top:0.3rem;">
@@ -671,6 +724,26 @@ S ↓   │   ↓ S
 
           <div class="result-box" id="resultado-sem">
             Ajusta los tiempos, luego presiona “Iniciar ciclo de semáforos”.
+          </div>
+          <div class="sem-phase-table">
+            <h4>Fases del ciclo</h4>
+            <table class="small-table" id="sem-steps-table">
+              <thead>
+              <tr>
+                <th>#</th>
+                <th>Fase</th>
+                <th>Dirección con paso</th>
+                <th>Duración (s)</th>
+                <th>Inicio (s)</th>
+                <th>Fin (s)</th>
+                <th>Estado N–S</th>
+                <th>Estado E–O</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr><td colspan="8">Ajusta los parámetros para ver las fases.</td></tr>
+              </tbody>
+            </table>
           </div>
           <p style="font-size:0.8rem; margin-top:0.5rem;">
             Desde grafos: cuando una dirección está en rojo (o falla), es como si se desactivaran
